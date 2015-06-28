@@ -70,7 +70,7 @@ struct DijkstraDistPrev
 /// @param end      if -1 compute distances to all nodes, otherwise end when finding shortest path to end.
 /// @returns        Distances from start to all nodes, or int max if path was not found. Plus previous nodes from path from start (or -1 if not found).
 template<typename D = int>
-std::vector< DijkstraDistPrev<D> > dijkstra(const NeighbourListGraph<D>& graph, int start, int end)
+std::vector< DijkstraDistPrev<D> > dijkstra(const NeighbourListGraph< WeightedEdge<D> >& graph, int start, int end)
 {
     std::priority_queue< DijkstraNode<D>, std::vector< DijkstraNode<D> >, std::greater< DijkstraNode<D> > > nodesQueue;
     std::vector< DijkstraDistPrev<D> > distPrev(graph.numberOfNodes);
@@ -90,7 +90,7 @@ std::vector< DijkstraDistPrev<D> > dijkstra(const NeighbourListGraph<D>& graph, 
 
         for (size_t i = 0; i < graph.neighbours[node.id].size(); ++i)
         {
-            WeightedEgde<D> edge = graph.neighbours[node.id][i];
+            WeightedEdge<D> edge = graph.neighbours[node.id][i];
             if (distPrev[node.id].dist + edge.cost < distPrev[edge.v].dist)
             {
                 distPrev[edge.v].dist = distPrev[node.id].dist + edge.cost;
@@ -106,7 +106,7 @@ std::vector< DijkstraDistPrev<D> > dijkstra(const NeighbourListGraph<D>& graph, 
 /// @brief Returns path length or -1 if path was not found.
 /// @param path     Set to shortest path from start to end.
 template<typename D = int>
-D dijkstraPath(const NeighbourListGraph<D>& graph, int start, int end, std::vector<int>& path)
+D dijkstraPath(const NeighbourListGraph< WeightedEdge<D> >& graph, int start, int end, std::vector<int>& path)
 {
     std::vector< DijkstraDistPrev<D> > distPrev = dijkstra(graph, start, end);
 
@@ -129,7 +129,7 @@ D dijkstraPath(const NeighbourListGraph<D>& graph, int start, int end, std::vect
 
 /// @brief Returns path length or -1 if path was not found.
 template<typename D = int>
-D dijkstraCost(const NeighbourListGraph<D>& graph, int start, int end)
+D dijkstraCost(const NeighbourListGraph< WeightedEdge<D> >& graph, int start, int end)
 {
     std::vector< DijkstraDistPrev<D> > distPrev = dijkstra(graph, start, end);
     if (distPrev[end].prev == -1)

@@ -15,7 +15,7 @@
 /// @brief Starts DFS from given node.
 /// @note This algorithm doesn't use graph edge costs.
 template<typename C = int>
-bool topSortFromNode(int node, const NeighbourListGraph<C>& graph, std::vector<int>& result, std::vector<bool>& visited, std::vector<bool>& processing)
+bool topSortFromNode(int node, const NeighbourListGraph< WeightedEdge<C> >& graph, std::vector<int>& result, std::vector<bool>& visited, std::vector<bool>& processing)
 {
     assert(processing.size() == graph.numberOfNodes);
     assert(visited.size() == graph.numberOfNodes);
@@ -31,7 +31,7 @@ bool topSortFromNode(int node, const NeighbourListGraph<C>& graph, std::vector<i
 
     for (size_t i = 0; i < graph.neighbours[node].size(); ++i)
     {
-        WeightedEgde<C> edge = graph.neighbours[node][i];
+        WeightedEdge<C> edge = graph.neighbours[node][i];
         if (!topSortFromNode(edge.v, graph, result, visited, processing))
             return false;
     }
@@ -47,7 +47,7 @@ bool topSortFromNode(int node, const NeighbourListGraph<C>& graph, std::vector<i
 ///        Edge from p to k means that p must be done before k.
 /// @note This algorithm doesn't use graph edge costs.
 template<typename C = int>
-bool topSort(const NeighbourListGraph<C>& graph, std::vector<int>& result)
+bool topSort(const NeighbourListGraph< WeightedEdge<C> >& graph, std::vector<int>& result)
 {
     result.clear();
 

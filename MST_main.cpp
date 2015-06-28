@@ -27,7 +27,7 @@ void MST_main()
     std::cin >> M;
 
     EdgeListGraph<int> edgeListGraph(N);
-    NeighbourListGraph<int> neighbourListGraph(N);
+    NeighbourListGraph< WeightedEdge<int> > neighbourListGraph(N);
 
     for (int i = 0; i < M; ++i)
     {
@@ -37,7 +37,7 @@ void MST_main()
         k--;
 
         edgeListGraph.addEdge(p, k, w);
-        neighbourListGraph.addBidirectionalEdge(p, k, w);
+        neighbourListGraph.addBidirectionalEdge( WeightedEdge<int>(p, k, w) );
     }
 
     int kruskalCost = mstKruskalCost(edgeListGraph);

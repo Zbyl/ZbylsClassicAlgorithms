@@ -38,19 +38,19 @@ struct EdgeListGraph
     {
         assert(u < numberOfNodes);
         assert(v < numberOfNodes);
-        edges.push_back(WeightedEgde<C>(u, v, cost));
+        edges.push_back(WeightedEdge<C>(u, v, cost));
     }
 
     int numberOfNodes;  // number of nodes
-    std::vector< WeightedEgde<C> > edges;
+    std::vector< WeightedEdge<C> > edges;
 };
 
 template<typename C = int>
-std::vector< WeightedEgde<C> > mstKruskal(const EdgeListGraph<C>& graph)
+std::vector< WeightedEdge<C> > mstKruskal(const EdgeListGraph<C>& graph)
 {
     FindUnion FindUnion(graph.numberOfNodes);
-    std::vector< WeightedEgde<C> > sourceEdges(graph.edges.begin(), graph.edges.end());
-    std::vector< WeightedEgde<C> > acceptedEdges;
+    std::vector< WeightedEdge<C> > sourceEdges(graph.edges.begin(), graph.edges.end());
+    std::vector< WeightedEdge<C> > acceptedEdges;
 
     std::sort(sourceEdges.begin(), sourceEdges.end());
 
@@ -58,7 +58,7 @@ std::vector< WeightedEgde<C> > mstKruskal(const EdgeListGraph<C>& graph)
     int numberOfNodesInMST = 1;
     while (numberOfNodesInMST < graph.numberOfNodes)
     {
-        WeightedEgde<C> edge = sourceEdges[currentEdge];
+        WeightedEdge<C> edge = sourceEdges[currentEdge];
         currentEdge++;
 
         int root0 = FindUnion.findRoot(edge.u);
@@ -77,7 +77,7 @@ std::vector< WeightedEgde<C> > mstKruskal(const EdgeListGraph<C>& graph)
 template<typename C = int>
 int mstKruskalCost(const EdgeListGraph<C>& graph)
 {
-    std::vector< WeightedEgde<C> > acceptedEdges = mstKruskal(graph);
+    std::vector< WeightedEdge<C> > acceptedEdges = mstKruskal(graph);
 
     int cost = 0;
     for (auto edge : acceptedEdges)

@@ -27,7 +27,7 @@ void TopSort_main()
     std::cin >> N;
     std::cin >> M;
 
-    NeighbourListGraph<int> neighbourListGraph(N);
+    NeighbourListGraph< WeightedEdge<int> > neighbourListGraph(N);
 
     for (int i = 0; i < M; ++i)
     {
@@ -36,7 +36,7 @@ void TopSort_main()
         p--;
         k--;
 
-        neighbourListGraph.addDirectedEdge(p, k, 0);
+        neighbourListGraph.addDirectedEdge( WeightedEdge<int>(p, k, 0) );
     }
 
     // edge from p to k means that p must be done before k

@@ -16,7 +16,7 @@
 //       W += edges from v;
 // return R
 //
-// As a minor optimisations minDistances array is kept. It contains minimal distances from current node set to all other nodes.
+// As a minor optimisations minDistances array is kept. It contains minimal distances from current node to all other nodes.
 // It is used to skip edges that won't be used in MST anyway.
 //
 
@@ -29,10 +29,10 @@
 #include "ZAssert.h"
 
 template<typename C = int>
-std::vector< WeightedEgde<C> > mstPrim(const NeighbourListGraph<C>& graph)
+std::vector< WeightedEdge<C> > mstPrim(const NeighbourListGraph< WeightedEdge<C> >& graph)
 {
-    std::vector< WeightedEgde<C> > acceptedEdges;
-    std::priority_queue< WeightedEgde<C>, std::vector< WeightedEgde<C> >, std::greater< WeightedEgde<C> > > workingEdges;
+    std::vector< WeightedEdge<C> > acceptedEdges;
+    std::priority_queue< WeightedEdge<C>, std::vector< WeightedEdge<C> >, std::greater< WeightedEdge<C> > > workingEdges;
     std::vector<bool> visited(graph.numberOfNodes);
     std::vector<int> minDistances(graph.numberOfNodes, std::numeric_limits<int>::max());
 
@@ -46,7 +46,7 @@ std::vector< WeightedEgde<C> > mstPrim(const NeighbourListGraph<C>& graph)
     int numberOfNodesInMST = 1;
     while (numberOfNodesInMST < graph.numberOfNodes)
     {
-        WeightedEgde<C> edge = workingEdges.top();
+        WeightedEdge<C> edge = workingEdges.top();
         workingEdges.pop();
 
         if (visited[edge.v])
@@ -55,7 +55,7 @@ std::vector< WeightedEgde<C> > mstPrim(const NeighbourListGraph<C>& graph)
         visited[edge.v] = true;
         for (size_t i = 0; i < graph.neighbours[edge.v].size(); ++i)
         {
-            WeightedEgde<C> newEdge = graph.neighbours[edge.v][i];
+            WeightedEdge<C> newEdge = graph.neighbours[edge.v][i];
             if (newEdge.cost > minDistances[newEdge.v])
                 continue;
             minDistances[newEdge.v] = newEdge.cost;
@@ -70,9 +70,9 @@ std::vector< WeightedEgde<C> > mstPrim(const NeighbourListGraph<C>& graph)
 }
 
 template<typename C = int>
-int mstPrimCost(const NeighbourListGraph<C>& graph)
+int mstPrimCost(const NeighbourListGraph< WeightedEdge<C> >& graph)
 {
-    std::vector< WeightedEgde<C> > acceptedEdges = mstPrim(graph);
+    std::vector< WeightedEdge<C> > acceptedEdges = mstPrim(graph);
 
     int cost = 0;
     for (auto edge : acceptedEdges)

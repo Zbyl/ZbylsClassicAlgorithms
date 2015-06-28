@@ -4,33 +4,74 @@
 
 #include "ZAssert.h"
 
-template<typename C = int>
-struct WeightedEgde
+/// @brief Set's edge "twin" edge (index of correlated edge in edge.v's neighbour list)
+template<typename EdgeType>
+void setTwinEdge(EdgeType& edge, int twinEdge)
 {
-    WeightedEgde(int u, int v, C cost)
-        : u(u), v(v), cost(cost)
+}
+
+struct Edge
+{
+    Edge(int u, int v)
+        : u(u), v(v)
+    {
+    }
+
+    // we could add edge id here to be able to match edges with some other data
+    int u;      // start of edge
+    int v;      // end of edge
+};
+
+template<typename C = int>
+struct WeightedEdge : Edge
+{
+    WeightedEdge(int u, int v, C cost)
+        : Edge(u, v)
+        , cost(cost)
     {}
 
     // we could add edge id here to be able to match edges with some other data
-    int u, v;
-    C cost;
+    C cost;     // "cost" of edge
 
-    bool operator<(const WeightedEgde& other) const
+    bool operator<(const WeightedEdge& other) const
     {
         return this->cost < other.cost;
     }
 
-    bool operator>(const WeightedEgde& other) const
+    bool operator>(const WeightedEdge& other) const
     {
         return this->cost > other.cost;
     }
 };
 
+template<typename C = int>
+struct MaxFlowEdge : Edge
+{
+    MaxFlowEdge(int u, int v, C capacity)
+        : Edge(u, v)
+        , capacity(capacity)
+        , flow()
+        , twinEdge(-1)
+    {
+    }
+
+    C capacity;     // capacity of the edge
+    C flow;         // current flow through the edge
+    int twinEdge;   // index of this edge's twin edge (same edge, but in different direction) in v's edges; filled only in case of bidirectional edges
+};
+
+template<typename C>
+void setTwinEdge(MaxFlowEdge<C>& edge, int twinEdge)
+{
+    edge.twinEdge = twinEdge;
+}
+
+
 /// @brief Graph is represented as:
 ///        - array of nodes' neighbours,
 ///        - node A's neighbours is a list of directed edges (A, B, cost).
 ///        - each bidirectional edge appears in the graph twice: as (A, B, cost), and as (B, A, cost).
-template<typename C = int>
+template<typename Edge>
 struct NeighbourListGraph
 {
     NeighbourListGraph(int numberOfNodes)
@@ -39,35 +80,47 @@ struct NeighbourListGraph
     {
     }
 
-    void addDirectedEdge(int u, int v, C cost)
+    /// @brief Returns index of the edge in edge.u neighbour's list.
+    int addDirectedEdge(const Edge& edge)
     {
-        assert(u < numberOfNodes);
-        assert(v < numberOfNodes);
-        neighbours[u].push_back(WeightedEgde<C>(u, v, cost));
+        assert(edge.u < numberOfNodes);
+        assert(edge.v < numberOfNodes);
+        neighbours[edge.u].push_back(edge);
+        return neighbours[edge.u].size() - 1;
     }
 
-    void addBidirectionalEdge(int u, int v, C cost)
+    /// @brief Returns index of the added edge in edge.u neighbour's list, and index of the added edge in edge.v neighbour's list.
+    std::pair<int, int> addBidirectionalEdge(const Edge& edge)
     {
-        assert(u < numberOfNodes);
-        assert(v < numberOfNodes);
-        neighbours[u].push_back(WeightedEgde<C>(u, v, cost));
-        neighbours[v].push_back(WeightedEgde<C>(v, u, cost));
+        Edge twinEdge = edge;
+        twinEdge.u = edge.v;
+        twinEdge.v = edge.u;
+        int uIdx = addDirectedEdge(edge);
+        int vIdx = addDirectedEdge(twinEdge);
+
+        setTwinEdge(neighbours[edge.u][uIdx], vIdx);
+        setTwinEdge(neighbours[edge.v][vIdx], uIdx);
+
+        return std::make_pair(uIdx, vIdx);
     }
 
     int numberOfNodes;  // number of nodes
-    std::vector< std::vector< WeightedEgde<C> > > neighbours;
+    std::vector< std::vector< Edge > > neighbours;
 
     /// @brief Creates a transposed graph.
-    NeighbourListGraph<C> transpose() const
+    /// @note  Doesn't take care of twin edges.
+    NeighbourListGraph dumbTranspose() const
     {
-        NeighbourListGraph<C> transposedGraph(numberOfNodes);
+        NeighbourListGraph transposedGraph(numberOfNodes);
 
         for (unsigned int n = 0; n < neighbours.size(); ++n)
         {
             for (unsigned int e = 0; e < neighbours[n].size(); ++e)
             {
-                WeightedEgde<C> edge = neighbours[n][e];
-                transposedGraph.addDirectedEdge(edge.v, edge.u, edge.cost);
+                Edge edge = neighbours[n][e];
+                edge.u = neighbours[n][e].v;
+                edge.v = neighbours[n][e].u;
+                transposedGraph.addDirectedEdge(edge);
             }
         }
 

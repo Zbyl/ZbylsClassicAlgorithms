@@ -33,7 +33,7 @@ void Dijkstra_main()
     std::cin >> N;
     std::cin >> M;
 
-    NeighbourListGraph<int> neighbourListGraph(N);
+    NeighbourListGraph< WeightedEdge<int> > neighbourListGraph(N);
 
     for (int i = 0; i < M; ++i)
     {
@@ -42,7 +42,7 @@ void Dijkstra_main()
         p--;
         k--;
 
-        neighbourListGraph.addDirectedEdge(p, k, w);
+        neighbourListGraph.addDirectedEdge( WeightedEdge<int>(p, k, w) );
     }
 
     std::vector<int> shortestPath;

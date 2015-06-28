@@ -21,14 +21,14 @@ template<typename C = int>
 class SCCTarjanHelper
 {
 private:
-    const NeighbourListGraph<C>& graph;
+    const NeighbourListGraph< WeightedEdge<C> >& graph;
     std::vector< std::vector<int> > sccGroups;  // result: strongly connected components
     std::vector<int> sccStack;                  // stack of nodes, from which we will extract strongly connected components
     std::vector<int> rank;                      // rank == 0 means, that the node was not yet visited, int max means - already part of scc
     int rankCounter;                            // used to number nodes in DFS order
 
 public:
-    SCCTarjanHelper(const NeighbourListGraph<C>& graph)
+    SCCTarjanHelper(const NeighbourListGraph< WeightedEdge<C> >& graph)
         : graph(graph)
         , rank(graph.numberOfNodes)
         , rankCounter(1)
@@ -42,7 +42,7 @@ public:
         bool rankCorrected = false;
         for (size_t i = 0; i < graph.neighbours[node].size(); ++i)
         {
-            WeightedEgde<C> edge = graph.neighbours[node][i];
+            WeightedEdge<C> edge = graph.neighbours[node][i];
             if (rank[edge.v] == 0)
             {
                 // node was not yet visited, so visit it
@@ -101,7 +101,7 @@ public:
 
 /// @note Tarjan's algorithm doesn't use graph edge costs.
 template<typename C = int>
-std::vector< std::vector<int> > SCCTarjan(const NeighbourListGraph<C>& graph)
+std::vector< std::vector<int> > SCCTarjan(const NeighbourListGraph< WeightedEdge<C> >& graph)
 {
     SCCTarjanHelper<C> helper(graph);
     return helper.start();

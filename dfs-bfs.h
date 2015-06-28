@@ -14,8 +14,8 @@
 
 /// @brief Returns nodes in order of dfs pre-traversal starting from given node.
 /// @note This algorithm doesn't use graph edge costs.
-template<typename C = int>
-void dfsFromNode(int node, const NeighbourListGraph<C>& graph, std::vector<int>& result, std::vector<bool>& visited, bool preTraversal)
+template< typename EdgeType = WeightedEdge<int> >
+void dfsFromNode(int node, const NeighbourListGraph<EdgeType>& graph, std::vector<int>& result, std::vector<bool>& visited, bool preTraversal)
 {
     assert(visited.size() == graph.numberOfNodes);
     if (visited[node])
@@ -28,7 +28,7 @@ void dfsFromNode(int node, const NeighbourListGraph<C>& graph, std::vector<int>&
 
     for (size_t i = 0; i < graph.neighbours[node].size(); ++i)
     {
-        WeightedEgde<C> edge = graph.neighbours[node][i];
+        EdgeType edge = graph.neighbours[node][i];
         dfsFromNode(edge.v, graph, result, visited, preTraversal);
     }
 
@@ -38,8 +38,8 @@ void dfsFromNode(int node, const NeighbourListGraph<C>& graph, std::vector<int>&
 
 /// @brief Returns nodes in order of dfs pre- or post-traversal starting from given node.
 /// @note This algorithm doesn't use graph edge costs.
-template<typename C = int>
-std::vector<int> dfsFromNode(int startNode, const NeighbourListGraph<C>& graph, std::vector<bool>& visited, bool preTraversal)
+template< typename EdgeType = WeightedEdge<int> >
+std::vector<int> dfsFromNode(int startNode, const NeighbourListGraph<EdgeType>& graph, std::vector<bool>& visited, bool preTraversal)
 {
     std::vector<int> result;
 
@@ -50,8 +50,8 @@ std::vector<int> dfsFromNode(int startNode, const NeighbourListGraph<C>& graph, 
 
 /// @brief Returns nodes in order of dfs pre- or post-traversal.
 /// @note This algorithm doesn't use graph edge costs.
-template<typename C = int>
-std::vector<int> dfs(const NeighbourListGraph<C>& graph, bool preTraversal)
+template< typename EdgeType = WeightedEdge<int> >
+std::vector<int> dfs(const NeighbourListGraph<EdgeType>& graph, bool preTraversal)
 {
     std::vector<int> result;
     std::vector<bool> visited(graph.numberOfNodes);
@@ -74,8 +74,8 @@ std::vector<int> dfs(const NeighbourListGraph<C>& graph, bool preTraversal)
 
 /// @brief Returns nodes in order of bfs traversal starting from given node.
 /// @note This algorithm doesn't use graph edge costs.
-template<typename C = int>
-std::vector<int> bfsFromNode(int startNode, const NeighbourListGraph<C>& graph, std::vector<int>& result, std::vector<bool>& visited)
+template< typename EdgeType = WeightedEdge<int> >
+std::vector<int> bfsFromNode(int startNode, const NeighbourListGraph<EdgeType>& graph, std::vector<int>& result, std::vector<bool>& visited)
 {
     std::queue<int> nodesToVisit;
     nodesToVisit.push(startNode);
@@ -93,7 +93,7 @@ std::vector<int> bfsFromNode(int startNode, const NeighbourListGraph<C>& graph, 
 
         for (unsigned int i = 0; i < graph.neighbours[node].size(); ++i)
         {
-            WeightedEgde<C> edge = graph.neighbours[node][i];
+            EdgeType edge = graph.neighbours[node][i];
             nodesToVisit.push(edge.v);
         }
     }
@@ -103,8 +103,8 @@ std::vector<int> bfsFromNode(int startNode, const NeighbourListGraph<C>& graph, 
 
 /// @brief Returns nodes in order of bfs traversal starting from given node.
 /// @note This algorithm doesn't use graph edge costs.
-template<typename C = int>
-std::vector<int> bfsFromNode(int startNode, const NeighbourListGraph<C>& graph, std::vector<bool>& visited)
+template< typename EdgeType = WeightedEdge<int> >
+std::vector<int> bfsFromNode(int startNode, const NeighbourListGraph<EdgeType>& graph, std::vector<bool>& visited)
 {
     std::vector<int> result;
 
@@ -115,8 +115,8 @@ std::vector<int> bfsFromNode(int startNode, const NeighbourListGraph<C>& graph, 
 
 /// @brief Returns nodes in order of bfs traversal.
 /// @note This algorithm doesn't use graph edge costs.
-template<typename C = int>
-std::vector<int> bfs(int startNode, const NeighbourListGraph<C>& graph)
+template< typename EdgeType = WeightedEdge<int> >
+std::vector<int> bfs(int startNode, const NeighbourListGraph<EdgeType>& graph)
 {
     std::vector<int> result;
     std::vector<bool> visited(graph.numberOfNodes);
