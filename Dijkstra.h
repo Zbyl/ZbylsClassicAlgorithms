@@ -68,7 +68,7 @@ struct DijkstraDistPrev
 
 /// @brief Computes distances to all graph nodes from given start node.
 /// @param end      if -1 compute distances to all nodes, otherwise end when finding shortest path to end.
-/// @returns        Distances from start to all nodes, or int max if path was not found. Plus previous nodes from path from start (or -1 if not found).
+/// @returns        Distances from start to all nodes, or int max if path was not found. Plus previous nodes from path from start (or -1 if path not found or node == start).
 template<typename D = int>
 std::vector< DijkstraDistPrev<D> > dijkstra(const NeighbourListGraph< WeightedEdge<D> >& graph, int start, int end)
 {

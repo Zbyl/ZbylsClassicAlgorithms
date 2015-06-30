@@ -38,8 +38,8 @@ void SCC_main()
         neighbourListGraph.addDirectedEdge( WeightedEdge<int>(p, k, 0) );
     }
 
-    std::vector< std::vector<int> > sccGroupsT = SCCTarjan<int>(neighbourListGraph);
-    std::vector< std::vector<int> > sccGroupsK = SCCKosaraju<int>(neighbourListGraph);
+    std::vector< std::vector<int> > sccGroupsT = SCCTarjan(neighbourListGraph);
+    std::vector< std::vector<int> > sccGroupsK = SCCKosaraju(neighbourListGraph);
 
     std::cout << "Strongly connected components Tarjan:" << std::endl;
     for (unsigned int i = 0; i < sccGroupsT.size(); ++i)

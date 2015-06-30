@@ -20,37 +20,15 @@
 #include <algorithm>
 
 #include "FindUnion.h"
-#include "NeighbourListGraph.h"
+#include "EdgeListGraph.h"
 #include "ZAssert.h"
 
-/// @brief Graph is represented as:
-///        - number of nodes,
-///        - list of undirected edges (begin, end, cost).
-template<typename C = int>
-struct EdgeListGraph
-{
-    EdgeListGraph(int numberOfNodes)
-        : numberOfNodes(numberOfNodes)
-    {
-    }
-
-    void addEdge(int u, int v, C cost)
-    {
-        assert(u < numberOfNodes);
-        assert(v < numberOfNodes);
-        edges.push_back(WeightedEdge<C>(u, v, cost));
-    }
-
-    int numberOfNodes;  // number of nodes
-    std::vector< WeightedEdge<C> > edges;
-};
-
-template<typename C = int>
-std::vector< WeightedEdge<C> > mstKruskal(const EdgeListGraph<C>& graph)
+template<typename EdgeType>
+std::vector<EdgeType> mstKruskal(const EdgeListGraph<EdgeType>& graph)
 {
     FindUnion FindUnion(graph.numberOfNodes);
-    std::vector< WeightedEdge<C> > sourceEdges(graph.edges.begin(), graph.edges.end());
-    std::vector< WeightedEdge<C> > acceptedEdges;
+    std::vector<EdgeType> sourceEdges(graph.edges.begin(), graph.edges.end());
+    std::vector<EdgeType> acceptedEdges;
 
     std::sort(sourceEdges.begin(), sourceEdges.end());
 
@@ -58,7 +36,7 @@ std::vector< WeightedEdge<C> > mstKruskal(const EdgeListGraph<C>& graph)
     int numberOfNodesInMST = 1;
     while (numberOfNodesInMST < graph.numberOfNodes)
     {
-        WeightedEdge<C> edge = sourceEdges[currentEdge];
+        EdgeType edge = sourceEdges[currentEdge];
         currentEdge++;
 
         int root0 = FindUnion.findRoot(edge.u);
@@ -74,10 +52,10 @@ std::vector< WeightedEdge<C> > mstKruskal(const EdgeListGraph<C>& graph)
     return acceptedEdges;
 }
 
-template<typename C = int>
-int mstKruskalCost(const EdgeListGraph<C>& graph)
+template<typename EdgeType>
+int mstKruskalCost(const EdgeListGraph<EdgeType>& graph)
 {
-    std::vector< WeightedEdge<C> > acceptedEdges = mstKruskal(graph);
+    std::vector<EdgeType> acceptedEdges = mstKruskal(graph);
 
     int cost = 0;
     for (auto edge : acceptedEdges)

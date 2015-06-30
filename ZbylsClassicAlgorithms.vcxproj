@@ -83,6 +83,7 @@
     <ClCompile Include="FindUnion.h" />
     <ClCompile Include="FindUnion_main.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MaxFlow_main.cpp" />
     <ClCompile Include="MST_main.cpp" />
     <ClCompile Include="SCC_main.cpp" />
     <ClCompile Include="TopSort_main.cpp" />
@@ -90,6 +91,7 @@
   <ItemGroup>
     <ClInclude Include="dfs-bfs.h" />
     <ClInclude Include="Dijkstra.h" />
+    <ClInclude Include="EdgeListGraph.h" />
     <ClInclude Include="MST-Kruskal.h" />
     <ClInclude Include="MST-Prim.h" />
     <ClInclude Include="NeighbourListGraph.h" />

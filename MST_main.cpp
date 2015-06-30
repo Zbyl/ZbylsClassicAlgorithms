@@ -26,7 +26,7 @@ void MST_main()
     std::cin >> N;
     std::cin >> M;
 
-    EdgeListGraph<int> edgeListGraph(N);
+    EdgeListGraph< WeightedEdge<int> > edgeListGraph(N);
     NeighbourListGraph< WeightedEdge<int> > neighbourListGraph(N);
 
     for (int i = 0; i < M; ++i)
@@ -36,7 +36,7 @@ void MST_main()
         p--;
         k--;
 
-        edgeListGraph.addEdge(p, k, w);
+        edgeListGraph.addEdge( WeightedEdge<int>(p, k, w) );
         neighbourListGraph.addBidirectionalEdge( WeightedEdge<int>(p, k, w) );
     }
 

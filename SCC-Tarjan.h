@@ -16,19 +16,18 @@
 #include "NeighbourListGraph.h"
 #include "ZAssert.h"
 
-/// @note Tarjan's algorithm doesn't use graph edge costs.
-template<typename C = int>
+template<typename EdgeType>
 class SCCTarjanHelper
 {
 private:
-    const NeighbourListGraph< WeightedEdge<C> >& graph;
+    const NeighbourListGraph<EdgeType>& graph;
     std::vector< std::vector<int> > sccGroups;  // result: strongly connected components
     std::vector<int> sccStack;                  // stack of nodes, from which we will extract strongly connected components
     std::vector<int> rank;                      // rank == 0 means, that the node was not yet visited, int max means - already part of scc
     int rankCounter;                            // used to number nodes in DFS order
 
 public:
-    SCCTarjanHelper(const NeighbourListGraph< WeightedEdge<C> >& graph)
+    SCCTarjanHelper(const NeighbourListGraph<EdgeType>& graph)
         : graph(graph)
         , rank(graph.numberOfNodes)
         , rankCounter(1)
@@ -42,7 +41,7 @@ public:
         bool rankCorrected = false;
         for (size_t i = 0; i < graph.neighbours[node].size(); ++i)
         {
-            WeightedEdge<C> edge = graph.neighbours[node][i];
+            EdgeType edge = graph.neighbours[node][i];
             if (rank[edge.v] == 0)
             {
                 // node was not yet visited, so visit it
@@ -99,11 +98,10 @@ public:
 
 };
 
-/// @note Tarjan's algorithm doesn't use graph edge costs.
-template<typename C = int>
-std::vector< std::vector<int> > SCCTarjan(const NeighbourListGraph< WeightedEdge<C> >& graph)
+template<typename EdgeType>
+std::vector< std::vector<int> > SCCTarjan(const NeighbourListGraph<EdgeType>& graph)
 {
-    SCCTarjanHelper<C> helper(graph);
+    SCCTarjanHelper<EdgeType> helper(graph);
     return helper.start();
 }
 
