@@ -96,6 +96,9 @@ int maxFlowDinicDFS(NeighbourListGraph< MaxFlowEdge<C> >& graph, int node, int e
         int childrenFlow = maxFlowDinicDFS(graph, edge.v, endNode, distances, std::min(flowLeft, maxFlowLeft));
         edge.flow += childrenFlow;
 
+        MaxFlowEdge<C>& twinEdge = graph.neighbours[edge.v][edge.twinEdge];
+        twinEdge.flow -= childrenFlow;
+
         maxFlowLeft -= childrenFlow;
         if (maxFlowLeft == 0)
             break;

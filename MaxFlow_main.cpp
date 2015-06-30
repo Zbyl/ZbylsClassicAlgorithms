@@ -16,7 +16,7 @@ void MaxFlow_main()
     */
 
 #ifdef ZBYL
-    freopen("maxflow2.txt", "r", stdin);
+    freopen("maxflow.txt", "r", stdin);
 #endif
 
     int N; // node count
