@@ -3,7 +3,6 @@
 #define EdgeListGraph_H
 
 #include "ZAssert.h"
-#include "EdgeListGraph.h"
 
 /// @brief Graph is represented as:
 ///        - number of nodes,

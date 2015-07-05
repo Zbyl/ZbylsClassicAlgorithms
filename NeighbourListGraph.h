@@ -71,7 +71,7 @@ void setTwinEdge(MaxFlowEdge<C>& edge, int twinEdge)
 ///        - array of nodes' neighbours,
 ///        - node A's neighbours is a list of directed edges (A, B, cost).
 ///        - each bidirectional edge appears in the graph twice: as (A, B, cost), and as (B, A, cost).
-template<typename Edge>
+template<typename EdgeType>
 struct NeighbourListGraph
 {
     NeighbourListGraph(int numberOfNodes)
@@ -80,8 +80,14 @@ struct NeighbourListGraph
     {
     }
 
+    NeighbourListGraph(NeighbourListGraph&& other) noexcept
+        : numberOfNodes(other.numberOfNodes)
+        , neighbours(std::move(other.neighbours))
+    {
+    }
+
     /// @brief Returns index of the edge in edge.u neighbour's list.
-    int addDirectedEdge(const Edge& edge)
+    int addDirectedEdge(const EdgeType& edge)
     {
         assert(edge.u < numberOfNodes);
         assert(edge.v < numberOfNodes);
@@ -90,9 +96,9 @@ struct NeighbourListGraph
     }
 
     /// @brief Returns index of the added edge in edge.u neighbour's list, and index of the added edge in edge.v neighbour's list.
-    std::pair<int, int> addBidirectionalEdge(const Edge& edge)
+    std::pair<int, int> addBidirectionalEdge(const EdgeType& edge)
     {
-        Edge twinEdge = edge;
+        EdgeType twinEdge = edge;
         twinEdge.u = edge.v;
         twinEdge.v = edge.u;
         int uIdx = addDirectedEdge(edge);
@@ -105,7 +111,7 @@ struct NeighbourListGraph
     }
 
     int numberOfNodes;  // number of nodes
-    std::vector< std::vector< Edge > > neighbours;
+    std::vector< std::vector< EdgeType > > neighbours;
 
     /// @brief Creates a transposed graph.
     /// @note  Doesn't take care of twin edges.
@@ -117,7 +123,7 @@ struct NeighbourListGraph
         {
             for (unsigned int e = 0; e < neighbours[n].size(); ++e)
             {
-                Edge edge = neighbours[n][e];
+                EdgeType edge = neighbours[n][e];
                 edge.u = neighbours[n][e].v;
                 edge.v = neighbours[n][e].u;
                 transposedGraph.addDirectedEdge(edge);
