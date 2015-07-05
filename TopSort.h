@@ -67,6 +67,7 @@ bool topSort(const NeighbourListGraph<EdgeType>& graph, std::vector<int>& result
             return false;
     }
 
+    std::reverse(result.begin(), result.end());
     return true;
 }
 

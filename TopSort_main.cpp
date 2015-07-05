@@ -44,6 +44,7 @@ void TopSort_main()
     std::vector<int> sorted;
     bool success = topSort(neighbourListGraph, sorted);
     std::vector<int> sorted2 = dfs(neighbourListGraph, false); // if graph cannot be sorted, it returns result anyway!
+    std::reverse(sorted2.begin(), sorted2.end());
 
     std::cout << "Topologically sorted:" << std::endl;
     if (!success)
