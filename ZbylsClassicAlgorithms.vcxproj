@@ -100,6 +100,7 @@
     <ClInclude Include="SCC-Graph.h" />
     <ClInclude Include="SCC-Kosaraju.h" />
     <ClInclude Include="SCC-Tarjan.h" />
+    <ClInclude Include="SP-DistanceProduct.h" />
     <ClInclude Include="TopSort.h" />
     <ClInclude Include="ZAssert.h" />
   </ItemGroup>

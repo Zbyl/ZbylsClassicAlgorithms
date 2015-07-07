@@ -2,6 +2,7 @@
 #ifndef IncidenceMatrixGraph_H
 #define IncidenceMatrixGraph_H
 
+#include <limits>
 #include <vector>
 #include <unordered_set>
 #include <unordered_map>
@@ -58,6 +59,106 @@ struct IncidenceMatrix
 
     int numberOfNodes;  // number of nodes
     std::vector<bool> incidenceMatrix; // incidenceMatrix[from * N + to] - so rows are nodes reachable from node 'from'
+};
+
+/// @brief Weight matrix is a matrix of edge or path weights between all nodes.
+///        std::numeric_limits<C>::max() means there is no path between nodes.
+///        See this article for explanation:
+///        http://wazniak.mimuw.edu.pl/index.php?title=Zaawansowane_algorytmy_i_struktury_danych/Wyk%C5%82ad_6
+template<typename C>
+struct WeightMatrix
+{
+    /// @brief Initializes weight matrix to identity with respect to distance multiplication if identity is true. Otherwise sets all fields to infinity.
+    ///        Identity: (8 represents infinity)
+    ///        0  8  8  8  8
+    ///        8  0  8  8  8
+    ///        8  8  0  8  8
+    ///        8  8  8  0  8
+    ///        8  8  8  8  0
+    WeightMatrix(int numberOfNodes, bool identity = true)
+        : numberOfNodes(numberOfNodes)
+        , weightMatrix(numberOfNodes * numberOfNodes, std::numeric_limits<C>::max())
+    {
+        if (identity)
+        {
+            for (int i = 0; i < numberOfNodes; ++i)
+            {
+                setWeight(i, i, 0);
+            }
+        }
+    }
+
+    WeightMatrix(WeightMatrix&& other) noexcept
+        : numberOfNodes(other.numberOfNodes)
+        , weightMatrix(std::move(other.weightMatrix))
+    {
+    }
+
+    /// @brief Returns std::numeric_limits<C>::max() if there is no path between nodes.
+    C getWeight(int u, int v) const
+    {
+        assert(u < numberOfNodes);
+        assert(v < numberOfNodes);
+        return weightMatrix[u * numberOfNodes + v];
+    }
+
+    void setWeight(int u, int v, C cost)
+    {
+        assert(u < numberOfNodes);
+        assert(v < numberOfNodes);
+        weightMatrix[u * numberOfNodes + v] = cost;
+    }
+
+    void addDirectedEdge(const WeightedEdge<C>& edge)
+    {
+        setWeight(edge.u, edge.v, edge.cost);
+    }
+
+    /// @brief Returns index of the added edge in edge.u neighbour's list, and index of the added edge in edge.v neighbour's list.
+    void addBidirectionalEdge(const WeightedEdge<C>& edge)
+    {
+        Edge twinEdge = edge;
+        twinEdge.u = edge.v;
+        twinEdge.v = edge.u;
+
+        addDirectedEdge(edge);
+        addDirectedEdge(twinEdge);
+    }
+
+    /// @brief Returns a matrix that represents shortest paths that are concatenation of paths represented by both operand matrixes.
+    ///        Cost: O(|V|^3)
+    ///        See: http://wazniak.mimuw.edu.pl/index.php?title=Zaawansowane_algorytmy_i_struktury_danych/Wyk%C5%82ad_6#Iloczyn_odleg.C5.82o.C5.9Bci_i_jego_w.C5.82a.C5.9Bciwo.C5.9Bci
+    static void distanceMultiply(const WeightMatrix& lhs, const WeightMatrix& rhs, WeightMatrix& result)
+    {
+        assert(lhs.numberOfNodes == result.numberOfNodes);
+        assert(rhs.numberOfNodes == result.numberOfNodes);
+
+        for (int i = 0; i < numberOfNodes; ++i)
+        {
+            for (int j = 0; j < numberOfNodes; ++j)
+            {
+                C minVal = std::numeric_limits<C>::max();
+                for (int k = 0; k < numberOfNodes; ++k)
+                {
+                    C lhsWeight = lhs.getWeight(i, k);
+                    if (lhsWeight == std::numeric_limits<C>::max())
+                        continue;
+                    C rhsWeight = rhs.getWeight(k, j);
+                    if (rhsWeight == std::numeric_limits<C>::max())
+                        continue;
+                    C curVal = lhsWeight + rhsWeight;
+                    if (curVal < minVal)
+                        minVal = curVal;
+                }
+                result.setWeight(i, j, minVal);
+            }
+        }
+
+        return result;
+    }
+
+    int numberOfNodes;  // number of nodes
+    std::vector<C> weightMatrix; // weightMatrix[from * N + to] = path length between nodes.
 };
 
 /// @brief Sparse incidence matrix is an O(1) set of pairs.
