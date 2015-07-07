@@ -80,11 +80,13 @@ struct NeighbourListGraph
     {
     }
 
+#if 0
     NeighbourListGraph(NeighbourListGraph&& other) noexcept
         : numberOfNodes(other.numberOfNodes)
         , neighbours(std::move(other.neighbours))
     {
     }
+#endif
 
     /// @brief Returns index of the edge in edge.u neighbour's list.
     int addDirectedEdge(const EdgeType& edge)

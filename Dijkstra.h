@@ -27,6 +27,61 @@
 #include "ZAssert.h"
 #include "NeighbourListGraph.h"
 
+/// @brief Represents distance from given node s and previous node on a shortest path from node s.
+template<typename D = int>
+struct NodeDistPrev
+{
+    NodeDistPrev()
+        : dist(std::numeric_limits<D>::max())
+        , prev(-1)
+    {}
+
+    NodeDistPrev(D dist, int prev)
+        : dist(dist)
+        , prev(prev)
+    {}
+
+    D dist;     // distance from start to this node, or std::numeric_limits<D>::max() if path doesn't exist
+    int prev;   // which node is before this on the shortest path (or -1 if it doesn't exist)
+};
+
+/// @brief Returns path length or -1 if path was not found.
+/// @param distPrev NodeDistPrev structure for every node.
+/// @param path     Set to shortest path from start to end.
+template<typename D = int>
+D reconstructPath(const std::vector< NodeDistPrev<D> >& distPrev, int start, int end, std::vector<int>& path)
+{
+    path.clear();
+    path.push_back(end);
+
+    while (path.back() != start)
+    {
+        assert(path.back() < distPrev.size());  // we must have entries for all nodes.
+
+        int prev = distPrev[path.back()].prev;
+        if (prev == -1)
+            return -1;
+
+        path.push_back(prev);
+    }
+
+    std::reverse(path.begin(), path.end());
+
+    return distPrev[end].dist;
+}
+
+/// @brief Returns distance from start to end or -1 if path was not found.
+/// @param distPrev     Should be computed using dijkstra of bellmanFord algorithms.
+template<typename D = int>
+D pathCost(const std::vector< NodeDistPrev<D> >& distPrev, int end)
+{
+    assert(static_cast<size_t>(end) < distPrev.size());  // we must have entries for all nodes.
+    if ((distPrev[end].dist == std::numeric_limits<D>::max()) && (distPrev[end].prev == -1))
+        return -1;
+    return distPrev[end].dist;
+}
+
+
 template<typename D = int>
 struct DijkstraNode
 {
@@ -49,31 +104,14 @@ struct DijkstraNode
     }
 };
 
-template<typename D = int>
-struct DijkstraDistPrev
-{
-    DijkstraDistPrev()
-        : dist(std::numeric_limits<D>::max())
-        , prev(-1)
-    {}
-
-    DijkstraDistPrev(D dist, int prev)
-        : dist(dist)
-        , prev(prev)
-    {}
-
-    D dist;  // distance from start to this node
-    int prev;  // which node is before this on the shortest path
-};
-
 /// @brief Computes distances to all graph nodes from given start node.
 /// @param end      if -1 compute distances to all nodes, otherwise end when finding shortest path to end.
 /// @returns        Distances from start to all nodes, or int max if path was not found. Plus previous nodes from path from start (or -1 if path not found or node == start).
 template<typename D = int>
-std::vector< DijkstraDistPrev<D> > dijkstra(const NeighbourListGraph< WeightedEdge<D> >& graph, int start, int end)
+std::vector< NodeDistPrev<D> > dijkstra(const NeighbourListGraph< WeightedEdge<D> >& graph, int start, int end)
 {
     std::priority_queue< DijkstraNode<D>, std::vector< DijkstraNode<D> >, std::greater< DijkstraNode<D> > > nodesQueue;
-    std::vector< DijkstraDistPrev<D> > distPrev(graph.numberOfNodes);
+    std::vector< NodeDistPrev<D> > distPrev(graph.numberOfNodes);
 
     nodesQueue.push(DijkstraNode<D>(start, 0));
     distPrev[start].dist = 0;
@@ -108,33 +146,16 @@ std::vector< DijkstraDistPrev<D> > dijkstra(const NeighbourListGraph< WeightedEd
 template<typename D = int>
 D dijkstraPath(const NeighbourListGraph< WeightedEdge<D> >& graph, int start, int end, std::vector<int>& path)
 {
-    std::vector< DijkstraDistPrev<D> > distPrev = dijkstra(graph, start, end);
-
-    path.clear();
-    path.push_back(end);
-
-    while (path.back() != start)
-    {
-        int prev = distPrev[path.back()].prev;
-        if (prev == -1)
-            return -1;
-
-        path.push_back(prev);
-    }
-
-    std::reverse(path.begin(), path.end());
-
-    return distPrev[end].dist;
+    std::vector< NodeDistPrev<D> > distPrev = dijkstra(graph, start, end);
+    return reconstructPath(distPrev, start, end, path);
 }
 
 /// @brief Returns path length or -1 if path was not found.
 template<typename D = int>
 D dijkstraCost(const NeighbourListGraph< WeightedEdge<D> >& graph, int start, int end)
 {
-    std::vector< DijkstraDistPrev<D> > distPrev = dijkstra(graph, start, end);
-    if (distPrev[end].prev == -1)
-        return -1;
-    return distPrev[end].dist;
+    std::vector< NodeDistPrev<D> > distPrev = dijkstra(graph, start, end);
+    return pathCost(distPrev, end);
 }
 
 #endif // Dijkstra_H

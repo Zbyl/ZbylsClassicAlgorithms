@@ -89,6 +89,7 @@
     <ClCompile Include="TopSort_main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BellmanFord.h" />
     <ClInclude Include="dfs-bfs.h" />
     <ClInclude Include="Dijkstra.h" />
     <ClInclude Include="EdgeListGraph.h" />
