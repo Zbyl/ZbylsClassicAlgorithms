@@ -71,5 +71,8 @@
     <ClInclude Include="EdgeListGraph.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BellmanFord.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
