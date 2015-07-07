@@ -71,5 +71,11 @@
     <ClInclude Include="EdgeListGraph.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SCC-Graph.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IncidenceMatrixGraph.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

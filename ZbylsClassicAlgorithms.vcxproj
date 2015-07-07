@@ -92,9 +92,11 @@
     <ClInclude Include="dfs-bfs.h" />
     <ClInclude Include="Dijkstra.h" />
     <ClInclude Include="EdgeListGraph.h" />
+    <ClInclude Include="IncidenceMatrixGraph.h" />
     <ClInclude Include="MST-Kruskal.h" />
     <ClInclude Include="MST-Prim.h" />
     <ClInclude Include="NeighbourListGraph.h" />
+    <ClInclude Include="SCC-Graph.h" />
     <ClInclude Include="SCC-Kosaraju.h" />
     <ClInclude Include="SCC-Tarjan.h" />
     <ClInclude Include="TopSort.h" />
