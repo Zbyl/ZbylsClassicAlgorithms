@@ -9,7 +9,7 @@
 // Pseudo kod algorytmu Bellmana-Forda:
 // http://wazniak.mimuw.edu.pl/index.php?title=Zaawansowane_algorytmy_i_struktury_danych/Wyk%C5%82ad_6#Algorytm
 //
-// ODLEG£ÓŒCI(W)
+// ODLEG£OŒCI(W)
 //  D = W
 //  m = 1
 //  while n - 1 > m do
@@ -64,7 +64,7 @@ template<typename C = int>
 WeightMatrix<C> allDistancesNaive(const WeightMatrix<C>& weightMatrix)
 {
     WeightMatrix<C> result = weightMatrix;
-    WeightMatrix<C> tempResult;
+    WeightMatrix<C> tempResult(weightMatrix.numberOfNodes);
     int pathLengths = 1;
 
     while (pathLengths < weightMatrix.numberOfNodes - 1)
@@ -82,8 +82,8 @@ WeightMatrix<C> allDistancesNaive(const WeightMatrix<C>& weightMatrix)
 template<typename C = int>
 WeightMatrix<C> allDistancesFloydWarshall(const WeightMatrix<C>& weightMatrix)
 {
-    WeightMatrix result(weightMatrix);  // distances through no nodes
-    WeightMatrix previousResult(weightMatrix.numberOfNodes);
+    WeightMatrix<C> result(weightMatrix);  // distances through no nodes
+    WeightMatrix<C> previousResult(weightMatrix.numberOfNodes);
 
     for (int k = 0; k < weightMatrix.numberOfNodes; ++k)
     {
@@ -96,7 +96,7 @@ WeightMatrix<C> allDistancesFloydWarshall(const WeightMatrix<C>& weightMatrix)
 
                 C distUntilK = previousResult.getWeight(i, k);   // dist through nodes 0 to k
                 C distAfterK = previousResult.getWeight(k, j);   // dist through nodes 0 to k
-                if ( (distUntilK < std::numeric_limits<C>::max()) && (distAfterK < std::numeric_limits<C>::max() )
+                if ( (distUntilK < std::numeric_limits<C>::max()) && (distAfterK < std::numeric_limits<C>::max()) )
                     minVal = std::min(minVal, distUntilK + distAfterK);
 
                 result.setWeight(i, j, minVal);

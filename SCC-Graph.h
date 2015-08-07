@@ -51,6 +51,7 @@ IncidenceMatrix SCCGraph(const NeighbourListGraph<EdgeType>& graph, const std::v
 /// @note  Graph is semi connected if all strongly connected components form a path.
 ///        http://himangi774.blogspot.com/2013/12/check-if-graph-is-strongl-connected.html
 /// @todo  It has O(n^2 + m) time complexity, and O(n^2) memory complexity - isn't there a better algorithm?!
+/// @note  We could use Floyd-Warshall O(|V|^3) algorithm (or better one).
 template<typename EdgeType>
 bool isSemiConnectedGraph(const NeighbourListGraph<EdgeType>& graph, const IncidenceMatrix& sccGraph)
 {

@@ -88,11 +88,13 @@ struct WeightMatrix
         }
     }
 
+#if 0
     WeightMatrix(WeightMatrix&& other) noexcept
         : numberOfNodes(other.numberOfNodes)
         , weightMatrix(std::move(other.weightMatrix))
     {
     }
+#endif
 
     /// @brief Returns std::numeric_limits<C>::max() if there is no path between nodes.
     C getWeight(int u, int v) const
@@ -133,12 +135,12 @@ struct WeightMatrix
         assert(lhs.numberOfNodes == result.numberOfNodes);
         assert(rhs.numberOfNodes == result.numberOfNodes);
 
-        for (int i = 0; i < numberOfNodes; ++i)
+        for (int i = 0; i < lhs.numberOfNodes; ++i)
         {
-            for (int j = 0; j < numberOfNodes; ++j)
+            for (int j = 0; j < lhs.numberOfNodes; ++j)
             {
                 C minVal = std::numeric_limits<C>::max();
-                for (int k = 0; k < numberOfNodes; ++k)
+                for (int k = 0; k < lhs.numberOfNodes; ++k)
                 {
                     C lhsWeight = lhs.getWeight(i, k);
                     if (lhsWeight == std::numeric_limits<C>::max())
@@ -153,8 +155,6 @@ struct WeightMatrix
                 result.setWeight(i, j, minVal);
             }
         }
-
-        return result;
     }
 
     int numberOfNodes;  // number of nodes
