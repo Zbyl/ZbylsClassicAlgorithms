@@ -39,6 +39,12 @@
     <ClCompile Include="MaxFlow_main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="WordAlgos_main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Heap_main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MST-Kruskal.h">
@@ -83,5 +89,45 @@
     <ClInclude Include="SP-DistanceProduct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Heap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".gitignore">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="dijkstra.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="findunion.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="heapsort.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="maxFlow.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="maxFlow2.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="maxFlow1000.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="mst.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="scc.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="topsort.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="words.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>

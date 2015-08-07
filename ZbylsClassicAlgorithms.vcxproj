@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -20,13 +20,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -82,17 +82,20 @@
     </ClCompile>
     <ClCompile Include="FindUnion.h" />
     <ClCompile Include="FindUnion_main.cpp" />
+    <ClCompile Include="Heap_main.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MaxFlow_main.cpp" />
     <ClCompile Include="MST_main.cpp" />
     <ClCompile Include="SCC_main.cpp" />
     <ClCompile Include="TopSort_main.cpp" />
+    <ClCompile Include="WordAlgos_main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BellmanFord.h" />
     <ClInclude Include="dfs-bfs.h" />
     <ClInclude Include="Dijkstra.h" />
     <ClInclude Include="EdgeListGraph.h" />
+    <ClInclude Include="Heap.h" />
     <ClInclude Include="IncidenceMatrixGraph.h" />
     <ClInclude Include="MST-Kruskal.h" />
     <ClInclude Include="MST-Prim.h" />
@@ -103,6 +106,21 @@
     <ClInclude Include="SP-DistanceProduct.h" />
     <ClInclude Include="TopSort.h" />
     <ClInclude Include="ZAssert.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".gitignore" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="dijkstra.txt" />
+    <Text Include="findunion.txt" />
+    <Text Include="heapsort.txt" />
+    <Text Include="maxFlow.txt" />
+    <Text Include="maxFlow1000.txt" />
+    <Text Include="maxFlow2.txt" />
+    <Text Include="mst.txt" />
+    <Text Include="scc.txt" />
+    <Text Include="topsort.txt" />
+    <Text Include="words.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
