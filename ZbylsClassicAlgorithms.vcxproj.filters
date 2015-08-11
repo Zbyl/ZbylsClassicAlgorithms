@@ -45,6 +45,9 @@
     <ClCompile Include="Heap_main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MaxMatching_main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MST-Kruskal.h">
@@ -90,6 +93,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Heap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MaxMatching-HopcroftKarp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

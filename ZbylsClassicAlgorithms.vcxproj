@@ -85,6 +85,7 @@
     <ClCompile Include="Heap_main.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MaxFlow_main.cpp" />
+    <ClCompile Include="MaxMatching_main.cpp" />
     <ClCompile Include="MST_main.cpp" />
     <ClCompile Include="SCC_main.cpp" />
     <ClCompile Include="TopSort_main.cpp" />
@@ -97,6 +98,7 @@
     <ClInclude Include="EdgeListGraph.h" />
     <ClInclude Include="Heap.h" />
     <ClInclude Include="IncidenceMatrixGraph.h" />
+    <ClInclude Include="MaxMatching-HopcroftKarp.h" />
     <ClInclude Include="MST-Kruskal.h" />
     <ClInclude Include="MST-Prim.h" />
     <ClInclude Include="NeighbourListGraph.h" />
