@@ -67,7 +67,7 @@ bool maxFlowDinicBFS(const NeighbourListGraph< MaxFlowEdge<C> >& graph, int star
     return distances[endNode] != -1;
 }
 
-/// @brief This method will go throw all shortest paths and saturate the flow using them.
+/// @brief This method will go through all shortest paths and saturate the flow using them.
 ///        Returns total flow that was added (will be less than maxFlowAcceptable).
 /// @param maxFlowAcceptable    Maximum flow that can flow up to given node from the path before it.
 template<typename C = int>
@@ -85,11 +85,11 @@ int maxFlowDinicDFS(NeighbourListGraph< MaxFlowEdge<C> >& graph, int node, int e
         if (distances[edge.v] != distances[node] + 1)
             continue; // shortest paths have increasing distances from start node
 
-        int flowLeft = edge.capacity - edge.flow;
+        int flowLeft = edge.capacity - edge.flow; // edge flow is in the range [-capacity, capacity]
         // if edge is saturated - skip it
         if (flowLeft <= 0)
         {
-            assert(flowLeft == 0); // we will never have negative flows
+            assert(flowLeft == 0); // flow left will never be less than zero
             continue;
         }
 

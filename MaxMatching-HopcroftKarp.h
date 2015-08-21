@@ -29,26 +29,85 @@
 #include "NeighbourListGraph.h"
 #include "ZAssert.h"
 
+/// @brief This method will check if graph is bipartite.
+/// @param graph        Input graph (V1 V2 E).
+/// @param coloring     [out] Set to true for one set vertices (V1) false for the other (V2).
+/// @returns true if graph is bipartite; false otherwise
+template<typename EdgeType>
+bool isBipartite(const NeighbourListGraph<EdgeType>& graph, std::vector<bool>& coloring)
+{
+    assert(coloring.size() == graph.numberOfNodes);
+    std::fill(coloring.begin(), coloring.end(), false);
+
+    std::vector<bool> nodesVisited(graph.numberOfNodes);
+
+    for (int node = 0; node < graph.numberOfNodes; ++node)
+    {
+        if (nodesVisited[node])
+            continue;
+
+        if (!isBipartiteDFSFromNode(graph, node, true, coloring, nodesVisited))
+            return false;
+    }
+
+    return true;
+}
+
+/// @brief DFS pass for checking if graph is bipartite.
+/// @param graph            Input graph (V1 V2 E).
+/// @param node             Node to start DFS from.
+/// @param coloring         Set to true for one set vertices (V1) false for the other (V2).
+/// @param nodesVisited     Set of already visited nodes.
+/// @returns true if graph is bipartite; false otherwise
+template<typename EdgeType>
+bool isBipartiteDFSFromNode(const NeighbourListGraph<EdgeType>& graph, int node, bool color, std::vector<bool>& coloring, std::vector<bool>& nodesVisited)
+{
+    if (nodesVisited[node])
+    {
+        return color == coloring[node];
+    }
+
+    nodesVisited[node] = true;
+    coloring[node] = color;
+
+    for (auto& edge : graph.neighbours[node])
+    {
+        if (!isBipartiteDFSFromNode(graph, edge.v, !color, coloring, nodesVisited))
+            return false;
+    }
+
+    return true;
+}
+
+/// @brief Edge type used while finding maximal matching in bipartite graph. 
 struct MaxMatchingEdge : Edge
 {
     MaxMatchingEdge(int u, int v)
         : Edge(u, v)
         , matched(false)
+        , twinEdge(-1)
     {}
 
     bool matched;   // if true, then edge is part of maximum matching
+    int twinEdge;   // index of this edge's twin edge (same edge, but in different direction) in v's edges; filled only in case of bidirectional edges
 };
 
-
-/// @brief Run BFS from given set of vertices.
-///        Even edges must be unmatched. Odd edges must be matched.
-///        BFS will end after processing full level in which unmatched vertex from V2 was reached.
-/// @note  Returns false if no unmatched vertex from V2 was reached.
-///        distances will contain vertex distances from start node set, or -1 if vertex was not reached
-bool maxMatchingHKBFS(const NeighbourListGraph<MaxMatchingEdge>& graph, const std::vector<int>& startNodes, const std::vector<bool>& nodesMatched, std::vector<int>& distances)
+void setTwinEdge(MaxMatchingEdge& edge, int twinEdge)
 {
-    assert(nodesMatched.size() <= graph.numberOfNodes);
+    edge.twinEdge = twinEdge;
+}
+
+
+/// @brief Run BFS from given set of vertices, such that even edges will be unmatched, and odd edges will be matched.
+///        BFS will end after processing full layer of nodes in which unmatched vertex from V2 was reached.
+/// @param startNodes       Collection of unmatched nodes in V1 (for Hopcroft-Karp algorithm is should contain all such nodes).
+/// @param nodesMatched     Collection of flags that say whether given node is matched in the matching we are trying to improve.
+/// @param distances        [out] Distances from start node set, or -1 if vertex was not reached during BFS search (either not-reachable, or BFS stopped before reching it).
+/// @return distance on which unmatched vertices from V2 were reached; -1 if none were reached.
+int maxMatchingHKBFS(const NeighbourListGraph<MaxMatchingEdge>& graph, const std::vector<int>& startNodes, const std::vector<bool>& nodesMatched, std::vector<int>& distances)
+{
     assert(startNodes.size() <= graph.numberOfNodes);
+    assert(nodesMatched.size() == graph.numberOfNodes);
     assert(distances.size() == graph.numberOfNodes);
     std::fill(distances.begin(), distances.end(), -1);
 
@@ -76,6 +135,7 @@ bool maxMatchingHKBFS(const NeighbourListGraph<MaxMatchingEdge>& graph, const st
         for (size_t i = 0; i < graph.neighbours[node].size(); ++i)
         {
             const MaxMatchingEdge& edge = graph.neighbours[node][i];
+            int other = edge.v;
 
             // from V1 we must go through unmatched edges
             // from V2 we must go through matched edges
@@ -85,86 +145,103 @@ bool maxMatchingHKBFS(const NeighbourListGraph<MaxMatchingEdge>& graph, const st
                 continue;
 
             // if we reached an unmatched node, we shouldn't go any lower
-            if (!nodesMatched[node])
+            if (!nodesMatched[other])
             {
-                assert(!isV1);
+                assert(isV1); // to unmatched nodes we should be able to get only from V1
                 assert( (finishOnLevel == -1) || (finishOnLevel == level + 1) );
                 finishOnLevel = level + 1;
             }
 
-            if (distances[edge.v] == -1)
+            if (distances[other] == -1)
             {
-                distances[edge.v] = level + 1;
-                queue.push_back(edge.v);
+                distances[other] = level + 1;
+                queue.push_back(other);
             }
         }
     }
 
-    return finishOnLevel != -1;
+    return finishOnLevel;
 }
 
 /// @brief This method will find maximal vertex-disjoint set of augmenting paths.
-bool maxMatchingHKDFS(const NeighbourListGraph<MaxMatchingEdge>& graph, int startNode, const std::vector<bool>& nodesMatched, std::vector<int>& distances)
+/// @param finishOnLevel    Length of shortest augmenting paths in the graph.
+/// @param nodesVisited     Nodes that already belong to one augmenting path, and therefore cannot be used again.
+/// @returns true if augmenting path was found; false otherwise
+bool maxMatchingHKDFSFromNode(NeighbourListGraph<MaxMatchingEdge>& graph, int node, int finishOnLevel, std::vector<bool>& nodesVisited, std::vector<bool>& nodesMatched, const std::vector<int>& distances)
 {
-}
+    if (nodesVisited[node])
+        return false;
+    nodesVisited[node] = true;
 
-/// @brief This method will go throw all shortest paths and saturate the flow using them.
-///        Returns total flow that was added (will be less than maxFlowAcceptable).
-/// @param maxFlowAcceptable    Maximum flow that can flow up to given node from the path before it.
-template<typename C = int>
-int maxFlowDinicDFS(NeighbourListGraph< MaxFlowEdge<C> >& graph, int node, int endNode, std::vector<int>& distances, int maxFlowAcceptable)
-{
-    assert(distances.size() == graph.numberOfNodes);
+    int level = distances[node];
+    assert(level >= 0);
 
-    if (node == endNode)
-        return maxFlowAcceptable;
-
-    int maxFlowLeft = maxFlowAcceptable;
-    for (size_t i = 0; i < graph.neighbours[node].size(); ++i)
+    // if we have reached a node on last level, we have found an augmenting path
+    if (level == finishOnLevel)
     {
-        MaxFlowEdge<C>& edge = graph.neighbours[node][i];
-        if (distances[edge.v] != distances[node] + 1)
-            continue; // shortest paths have increasing distances from start node
-
-        int flowLeft = edge.capacity - edge.flow;
-        // if edge is saturated - skip it
-        if (flowLeft <= 0)
-        {
-            assert(flowLeft == 0); // we will never have negative flows
-            continue;
-        }
-
-        int childrenFlow = maxFlowDinicDFS(graph, edge.v, endNode, distances, std::min(flowLeft, maxFlowLeft));
-        edge.flow += childrenFlow;
-
-        MaxFlowEdge<C>& twinEdge = graph.neighbours[edge.v][edge.twinEdge];
-        twinEdge.flow -= childrenFlow;
-
-        maxFlowLeft -= childrenFlow;
-        if (maxFlowLeft == 0)
-            break;
+        nodesMatched[node] = !nodesMatched[node];   // augment matching
+        return true;
     }
 
-    return maxFlowAcceptable - maxFlowLeft;
+    for (auto& edge : graph.neighbours[node])
+    {
+        int other = edge.v;
+        if (distances[other] != level + 1)
+            continue;
+
+        bool pathFound = maxMatchingHKDFSFromNode(graph, other, finishOnLevel, nodesVisited, nodesMatched, distances);
+        if (pathFound)
+        {
+            MaxMatchingEdge& twinEdge = graph.neighbours[other][edge.twinEdge];
+            nodesMatched[node] = !nodesMatched[node];   // augment matching
+            edge.matched = !edge.matched;   // augment matching
+            twinEdge.matched = !twinEdge.matched;   // augment matching
+            assert(edge.matched == twinEdge.matched);
+            return true;
+        }
+    }
+
+    return false;
 }
 
-/// @brief Return max flow in graph (using Dinic's algorithm: O(N^2 * M)).
-///        (Graph should have flow in all edges set to zero.)
-/// @note  The resulting flow will be stored in graph edges.
-template<typename C = int>
-int maxFlowDinic(NeighbourListGraph< MaxFlowEdge<C> >& graph, int startNode, int endNode)
+/// @brief This method will find maximal matching in a bipartitie graph (V1, V2, E) using Hopcroft-Karp algorithm.
+/// @param graph            Input graph. All edges must be unmatched. On return edges that were selected in the found maximal matching will have a flag set.
+/// @param coloring         [in] Set to true for one set vertices (V1) false for the other (V2).
+/// @param nodesMatched     [out] Nodes that were matched in the found maximal matching will have a flag set (from both V1 and V2).
+/// @returns The value of maximal matching in bipartite graph.
+int maxMatchingHK(NeighbourListGraph<MaxMatchingEdge>& graph, const std::vector<bool>& coloring, std::vector<bool>& nodesMatched)
 {
-    int maxFlow = 0;
+    assert(coloring.size() == graph.numberOfNodes);
+    assert(nodesMatched.size() == graph.numberOfNodes);
+    std::fill(nodesMatched.begin(), nodesMatched.end(), false);
 
     std::vector<int> distances(graph.numberOfNodes);
-    while (maxFlowDinicBFS(graph, startNode, endNode, distances))
+
+    while (true)
     {
-        int maxFlowAdd = maxFlowDinicDFS(graph, startNode, endNode, distances, std::numeric_limits<int>::max());
-        assert(maxFlowAdd > 0);
-        maxFlow += maxFlowAdd;
+        // We have to start BFS from unmatched V1 vertices
+        std::vector<int> startNodes;
+        for (size_t node = 0; node < coloring.size(); ++node)
+        {
+            if (coloring[node] && !nodesMatched[node])
+                startNodes.push_back(node);
+        }
+
+        int finishOnLevel = maxMatchingHKBFS(graph, startNodes, nodesMatched, distances);
+        if (finishOnLevel == -1)
+            break;
+
+        std::vector<bool> nodesVisited(graph.numberOfNodes);
+        for (auto startNode : startNodes)
+        {
+            assert(!nodesMatched[startNode]);
+            maxMatchingHKDFSFromNode(graph, startNode, finishOnLevel, nodesVisited, nodesMatched, distances);
+        }
     }
 
-    return maxFlow;
+    int matchedCount = std::count(nodesMatched.begin(), nodesMatched.end(), true);
+    assert( (matchedCount & 1) == 0 );
+    return matchedCount / 2;
 }
 
 #endif // MaxMatching_HopcroftKarp_H

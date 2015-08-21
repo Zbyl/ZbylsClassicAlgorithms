@@ -98,6 +98,7 @@
     <ClInclude Include="EdgeListGraph.h" />
     <ClInclude Include="Heap.h" />
     <ClInclude Include="IncidenceMatrixGraph.h" />
+    <ClInclude Include="MaxFlow-Dinic.h" />
     <ClInclude Include="MaxMatching-HopcroftKarp.h" />
     <ClInclude Include="MST-Kruskal.h" />
     <ClInclude Include="MST-Prim.h" />
